@@ -1,4 +1,4 @@
-const btns = document.querySelectorAll('.modal button')
+
 const btnDelete = document.getElementById('btn-delete')
 
 btnDelete.addEventListener('click', () => {
@@ -6,7 +6,7 @@ btnDelete.addEventListener('click', () => {
 })
 
 btn.addEventListener('click', () => {
-  glass.hidden = false
+  getAnswer('ALFA', 'BETA', 'GAMMA').then(addItem).finally(clearBtns)
 })
 
 document.body.addEventListener('keydown', (e) => {
@@ -15,24 +15,42 @@ document.body.addEventListener('keydown', (e) => {
   }
 })
 
-document.addEventListener('click', (e) => {
-  if (e.target === glass) {
-    glass.hidden = true
-  }
-})
 
+function addItem(str) {
+  const li = document.createElement('li')
+  li.innerText = str
+  words.append(li)
+}
 
-btns.forEach((btn) => {
-  btn.addEventListener('click', (e) =>  {
-    const li = document.createElement('li')
-    li.innerText =  e.target.innerText
-    words.append(li)
-    glass.hidden = true
+function getAnswer(btn1, btn2, btn3) {
+  const buttons = Array.from(arguments)
+  createBtns(buttons)
+  return new Promise((resolve, reject) => {
+    const btns = document.querySelectorAll('.modal button')
+    glass.hidden = false
+    btns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        resolve(e.target.innerText)
+        glass.hidden = true
+      })
+    })
+    glass.onclick = (e) => {
+      if (e.target === glass) {
+        glass.hidden = true
+        reject()
+      }
+    }
   })
-})
+}
 
+function createBtns(names) {
+  for (let item of names) {
+    const button = document.createElement('button')
+    button.innerText = item
+    document.querySelector('.modal').append(button)
+  }
+}
 
-
-
-
-
+function clearBtns() {
+  document.querySelector('.modal').innerHTML = ''
+}
